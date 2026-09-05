@@ -1,0 +1,30 @@
+# Entornos virtuales (NUNCA subirlos a Git)
+venv/
+.venv/
+env/
+ENV/
+
+# Archivos de caché y compilados de Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Carpetas de configuración de editores / IDEs
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Archivos del sistema operativo
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# Archivos de variables de entorno (claves, tokens)
+.env
+
+# Creacion De gitignore para un proyecto de Python
