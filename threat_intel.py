@@ -9,9 +9,14 @@ class ThreatIntelligence:
   Cumple con el RF02 (Requisito Innovador 1).
   """
 
-  def __init__(self, timeout: int = 6):
+  def __init__(self, timeout: int = 8):
     self._timeout = timeout
+    # Usamos el endpoint de busqueda general de CIRCL
     self._base_url = "https://cve.circl.lu/api/search"
+    # Cabeceras para evitar bloqueos por bot/User-Agent vacio
+    self._headers = {
+      "User-Agent": "SecurityAuditSuite/1.0 (POO-University-Project)"
+    }
 
   def _determinar_severidad(self, cvss: float) -> str:
     """Clasifica la severidad segun el estandar CVSS v3."""
@@ -39,18 +44,16 @@ class ThreatIntelligence:
     url_consulta = f"{self._base_url}/{nombre_servicio.lower()}"
 
     try:
-      respuesta = requests.get(url_consulta, timeout=self._timeout)
+      respuesta = requests.get(url_consulta, headers=self._headers, timeout=self._timeout)
+      
       if respuesta.status_code == 200:
         datos = respuesta.json()
-
-        # Si la API retorna un diccionario con lista o una lista directa
         resultados = datos if isinstance(datos, list) else datos.get("data", [])
 
         for item in resultados[:limite]:
           cve_id = item.get("id", "CVE-DESCONOCIDO")
           resumen = item.get("summary", "Sin descripcion disponible")
 
-          # cvss puede ser float, str o None dependiendo del registro
           raw_cvss = item.get("cvss")
           try:
             cvss_score = float(raw_cvss) if raw_cvss is not None else 0.0
@@ -66,9 +69,11 @@ class ThreatIntelligence:
             severidad=severidad
           )
           vulnerabilidades_detectadas.append(vulnerabilidad)
+      else:
+        # En caso de que el servidor responda con 403, 404, 500, etc.
+        print(f"[DEBUG] La API respondio con codigo de estado: {respuesta.status_code}")
 
-    except requests.exceptions.RequestException:
-      # Manejo defensivo: caidas de conexion, timeout o fallas de DNS
-      pass
+    except requests.exceptions.RequestException as e:
+      print(f"[DEBUG] Error de red en la peticion: {e}")
 
     return vulnerabilidades_detectadas
