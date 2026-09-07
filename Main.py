@@ -1,6 +1,6 @@
 from Puerto_Service import AuditorPuertos
 
-
+#Este sera el equivalente a hacer en Windows un: netstat -ano -b 
 def main():
   auditor = AuditorPuertos()
   print("[*] Escaneando sockets y puertos abiertos en el sistema operativo...\n")
