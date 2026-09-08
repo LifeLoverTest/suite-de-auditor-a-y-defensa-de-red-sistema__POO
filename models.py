@@ -17,4 +17,19 @@ class Vulnerabilidad:
     """
     return self.puntaje_cvss >= 9.0
   
+@dataclass(frozen=True)
+class ProcesoAuditable:
+  """Entidad que representa un proceso en ejecucion inspeccionado en el sistema.
+  Cumple con el RF03.
+  """
   
+  pid: int
+  nombre: str
+  ruta_ejecutable: str
+  uso_cpu: float
+  uso_memoria_mb: float
+  es_sospechoso: bool
+  
+  def resumen_consumo(self) -> str:
+    """Retorna un texto formateado del consumo de recursos."""
+    return f"CPU: {self.uso_cpu}% | RAM: {self.uso_memoria_mb:.2f} MB"
